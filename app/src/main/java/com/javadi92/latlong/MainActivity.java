@@ -19,6 +19,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.Locale;
 
@@ -42,6 +43,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
 
         buttonOpenMap=findViewById(R.id.button_open_map);
 
+
         button = findViewById(R.id.button);
         button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -59,10 +61,14 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
         buttonOpenMap.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //String uri = String.format(Locale.ENGLISH, "geo:%f,%f", latitude, longitude);
-                String uri="https://maps.google.com?q="+latitude+","+longitude;
+                // uri = String.format(Locale.ENGLISH, "geo:%f,%f?q=%f,%f", latitude, longitude);
+                String uri="https://maps.google.com?q="+latitude+","+longitude+"?z=19";
+                //String uri="https://maps.google.com/geo:"+latitude+","+longitude+"?q="+latitude+","+longitude;
                 Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
-                startActivity(intent);
+                intent.setPackage("com.google.android.apps.maps");
+                if (intent.resolveActivity(getPackageManager()) != null) {
+                    startActivity(intent);
+                }
             }
         });
 
