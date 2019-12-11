@@ -64,6 +64,8 @@ public class MainActivity extends AppCompatActivity {
                                 .isGooglePlayServicesAvailable(getApplicationContext());
 
                         if (status == ConnectionResult.SUCCESS) {
+                            latitude=gps.getLatitude();
+                            longitude=gps.getLongitude();
                             textView.setText("Latitude: "+gps.getLatitude()+"\n"+"Longitude: "+gps.getLongitude());
 
                         } else {
@@ -103,7 +105,28 @@ public class MainActivity extends AppCompatActivity {
         if (requestCode == 20) {
             if (grantResults.length > 0) {
                 if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    GPSTracker gps = new GPSTracker(MainActivity.this);
+                    int status = 0;
+                    if(gps.canGetLocation())
 
+                    {
+                        status = GooglePlayServicesUtil
+                                .isGooglePlayServicesAvailable(getApplicationContext());
+
+                        if (status == ConnectionResult.SUCCESS) {
+                            latitude=gps.getLatitude();
+                            longitude=gps.getLongitude();
+                            textView.setText("Latitude: "+gps.getLatitude()+"\n"+"Longitude: "+gps.getLongitude());
+
+                        } else {
+                            Toast.makeText(MainActivity.this,"گوگل پلی فعال نیست",Toast.LENGTH_LONG).show();
+                        }
+
+                    }
+                    else
+                    {
+                        gps.showSettingsAlert();
+                    }
                 }
             }
             else if(ActivityCompat.shouldShowRequestPermissionRationale(MainActivity.this,Manifest.permission.ACCESS_FINE_LOCATION)){
