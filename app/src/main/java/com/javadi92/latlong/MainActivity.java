@@ -21,9 +21,12 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GooglePlayServicesUtil;
+
 import java.util.Locale;
 
-public class MainActivity extends AppCompatActivity implements LocationListener {
+public class MainActivity extends AppCompatActivity {
 
     private LocationManager locationManager;
     Button button,buttonOpenMap;
@@ -52,8 +55,26 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
                 if (checkPermission != PackageManager.PERMISSION_GRANTED) {
                     ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 20);
                 } else {
-                    Location location = locationManager.getLastKnownLocation(locationManager.NETWORK_PROVIDER);
-                    onLocationChanged(location);
+                    GPSTracker gps = new GPSTracker(MainActivity.this);
+                    int status = 0;
+                    if(gps.canGetLocation())
+
+                    {
+                        status = GooglePlayServicesUtil
+                                .isGooglePlayServicesAvailable(getApplicationContext());
+
+                        if (status == ConnectionResult.SUCCESS) {
+                            textView.setText("Latitude: "+gps.getLatitude()+"\n"+"Longitude: "+gps.getLongitude());
+
+                        } else {
+                            Toast.makeText(MainActivity.this,"گوگل پلی فعال نیست",Toast.LENGTH_LONG).show();
+                        }
+
+                    }
+                    else
+                    {
+                        gps.showSettingsAlert();
+                    }
                 }
             }
         });
@@ -75,35 +96,14 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
 
     }
 
-    @Override
-    public void onLocationChanged(Location location) {
-        longitude = location.getLongitude();
-        latitude = location.getLatitude();
-        textView.setText("Longitude: " + longitude + "\n" + "Latitude: " + latitude);
-    }
 
-    @Override
-    public void onStatusChanged(String s, int i, Bundle bundle) {
-
-    }
-
-    @Override
-    public void onProviderEnabled(String s) {
-
-    }
-
-    @Override
-    public void onProviderDisabled(String s) {
-
-    }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         if (requestCode == 20) {
             if (grantResults.length > 0) {
                 if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    Location location = locationManager.getLastKnownLocation(locationManager.NETWORK_PROVIDER);
-                    onLocationChanged(location);
+
                 }
             }
             else if(ActivityCompat.shouldShowRequestPermissionRationale(MainActivity.this,Manifest.permission.ACCESS_FINE_LOCATION)){
